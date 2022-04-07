@@ -65,6 +65,7 @@ class _MainState extends State<Main> {
   }
 
   Widget _movieList(List<Results> data) {
+    // return ListView.builder(
     return ListView.separated(
       itemBuilder: (context, index) {
         var movie = data[index];
@@ -96,6 +97,7 @@ class _MainState extends State<Main> {
         );
       },
       itemCount: data.length,
+      //ListView.builder 의 경우는 사용안함 
       separatorBuilder: (context, index) {
         // if (index == 0) return SizedBox.shrink();
         return const Divider();
