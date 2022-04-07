@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-// import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-
-import '../main.dart';
+import 'package:http/http.dart' as http;
 import '../model/popular_movies.dart';
 
 const String kURL_GET_POPULAR_MOVIE = 'movie/popular';
@@ -26,7 +23,7 @@ const String kPARAM_PAGE = '&page=1';
 class MovieApi {
   static Future<List<Results>> loadPopularMovie() async {
     var url = Uri.parse(kBASE_TMDB_URL + kURL_GET_POPULAR_MOVIE + kAPI_KEY);
-    var response = await get(url);
+    var response = await http.get(url);
 
     List<Results> result = [];
     var respObj = PopularMovies.fromJson(jsonDecode(response.body));
@@ -47,7 +44,7 @@ class MovieApi {
     };
     //dart:convertor 패키지의 jsonCodec 을 통해 map to json
     var body = json.encode(data);
-    var response = await post(url, body: body, headers: headers);
+    var response = await http.post(url, body: body, headers: headers);
 
     List<Results> result = [];
     var respObj = PopularMovies.fromJson(jsonDecode(response.body));
