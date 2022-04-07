@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:sample_listview/model/popular_movies.dart';
+import 'package:sample_listview/net/movie_api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,9 +34,7 @@ class Main extends StatefulWidget {
   State<Main> createState() => _MainState();
 }
 
-const String URL_GET_POPULAR = '/popular';
-const String BASE_MOVIE_URL = 'https://api.themoviedb.org/3/movie';
-const String API_KEY = '?api_key=ed3f2c87d51c2ee427e6e5a6c3940b6f';
+
 
 class _MainState extends State<Main> {
   late Future<List<Results>> movies;
@@ -41,39 +42,65 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-    movies = _loadPopularMovie();
+    movies = MovieApi.loadPopularMovie();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Results>>(
-      future: movies,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return _movieList(snapshot.data!);
-        } else if (snapshot.hasError) {
-          return _hasError();
-        }
-        return _defaultView();
-      },
+    return MaterialApp(
+      home: Scaffold(
+        body: FutureBuilder<List<Results>>(
+          future: movies,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return _movieList(snapshot.data!);
+            } else if (snapshot.hasError) {
+              return _hasError();
+            }
+            return _defaultView();
+          },
+        ),
+      ),
     );
   }
 
-  Future<List<Results>> _loadPopularMovie() async {
-    var url = Uri.parse(BASE_MOVIE_URL + URL_GET_POPULAR + API_KEY);
-    var response = await http.get(url);
-
-    List<Results> result = [];
-    var respObj = PopularMovies.fromJson(jsonDecode(response.body));
-    if (respObj.results != null) {
-      result = respObj.results!;
-    }
-
-    return result;
-  }
-
   Widget _movieList(List<Results> data) {
-    return Text('${data.length}');
+    return ListView.separated(
+      itemBuilder: (context, index) {
+        var movie = data[index];
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              SizedBox(
+                  width: 80,
+                  child: CachedNetworkImage(
+                    imageUrl: kBASE_IMG_PATH + movie.posterPath!,
+                    placeholder: (context, url) => Transform.scale(
+                      scale: 0.5,
+                      child: CircularProgressIndicator(),
+                    ),
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(movie.title!),
+                    Text(movie.originalTitle!),
+                    Text(movie.releaseDate!),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      itemCount: data.length,
+      separatorBuilder: (context, index) {
+        // if (index == 0) return SizedBox.shrink();
+        return const Divider();
+      },
+    );
   }
 
   Widget _hasError() {
