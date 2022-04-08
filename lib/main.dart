@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -34,8 +35,6 @@ class Main extends StatefulWidget {
   State<Main> createState() => _MainState();
 }
 
-
-
 class _MainState extends State<Main> {
   late Future<List<Results>> movies;
 
@@ -66,7 +65,7 @@ class _MainState extends State<Main> {
 
   Widget _movieList(List<Results> data) {
     // return ListView.builder(
-    return ListView.separated(
+    return ListView.builder(
       itemBuilder: (context, index) {
         var movie = data[index];
         return Padding(
@@ -75,21 +74,20 @@ class _MainState extends State<Main> {
             children: [
               SizedBox(
                   width: 80,
-                  child: CachedNetworkImage(
-                    imageUrl: kBASE_IMG_PATH + movie.posterPath!,
-                    placeholder: (context, url) => Transform.scale(
-                      scale: 0.5,
-                      child: CircularProgressIndicator(),
-                    ),
-                  )),
+                  height: 120,
+                  child: Image.network(kBASE_IMG_PATH_W154 + movie.posterPath!)),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(movie.title!),
-                    Text(movie.originalTitle!),
-                    Text(movie.releaseDate!),
-                  ],
+                child: SizedBox(
+                  width: 280,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(movie.title!),
+                      Text(movie.originalTitle!, overflow: TextOverflow.ellipsis,),
+                      Text(movie.releaseDate!),
+                    ],
+                  ),
                 ),
               )
             ],
@@ -97,11 +95,11 @@ class _MainState extends State<Main> {
         );
       },
       itemCount: data.length,
-      //ListView.builder 의 경우는 사용안함 
-      separatorBuilder: (context, index) {
-        // if (index == 0) return SizedBox.shrink();
-        return const Divider();
-      },
+      //ListView.builder 의 경우는 사용안함
+      // separatorBuilder: (context, index) {
+      //   // if (index == 0) return SizedBox.shrink();
+      //   return const Divider();
+      // },
     );
   }
 

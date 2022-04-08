@@ -11,9 +11,9 @@ const String kURL_RATING = 'rating';
 const String kBASE_TMDB_URL = 'https://api.themoviedb.org/3/';
 
 
-const String kAPI_KEY = '?api_key=';
 
 const String kBASE_IMG_PATH = 'https://image.tmdb.org/t/p/original';
+const String kBASE_IMG_PATH_W154 = 'https://image.tmdb.org/t/p/w154';
 
 const String kSEARCH_KEYWORD = '&query=스파이더';
 const String kLANGUEGE_KO = '&language=ko-KR';
